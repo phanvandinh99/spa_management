@@ -185,6 +185,20 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 ```
 
+### Lỗi Relationship trong Entity Framework
+
+Nếu gặp lỗi relationship, hãy kiểm tra:
+
+1. **TinNhanHoTro đã được comment out** - hiện tại chưa sử dụng
+2. **Navigation properties** trong TaiKhoan.cs đã được comment
+3. **DbContext configuration** đã được comment tương ứng
+
+Để sử dụng TinNhanHoTro sau này:
+
+1. Uncomment các navigation properties trong TaiKhoan.cs
+2. Uncomment DbSet trong SpaDbContext.cs
+3. Uncomment và cấu hình relationship trong OnModelCreating
+
 ## 📞 Hỗ trợ
 
 Nếu gặp vấn đề, hãy kiểm tra:

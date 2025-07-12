@@ -25,7 +25,7 @@ namespace SpaManagement.Web.Models
         public bool DaXem { get; set; } = false;
 
         // Navigation properties
-        public virtual TaiKhoan NguoiGui { get; set; } = null!;
-        public virtual TaiKhoan NguoiNhan { get; set; } = null!;
+        public virtual TaiKhoan? NguoiGui { get; set; }
+        public virtual TaiKhoan? NguoiNhan { get; set; }
     }
 } 

@@ -30,7 +30,8 @@ namespace SpaManagement.Web.Models
         public virtual VaiTro? VaiTro { get; set; }
         public virtual KhachHang? KhachHang { get; set; }
         public virtual NhanVien? NhanVien { get; set; }
-        public virtual ICollection<TinNhanHoTro> TinNhanGui { get; set; } = new List<TinNhanHoTro>();
-        public virtual ICollection<TinNhanHoTro> TinNhanNhan { get; set; } = new List<TinNhanHoTro>();
+        // TODO: Uncomment khi cần sử dụng TinNhanHoTro
+        // public virtual ICollection<TinNhanHoTro> TinNhanGui { get; set; } = new List<TinNhanHoTro>();
+        // public virtual ICollection<TinNhanHoTro> TinNhanNhan { get; set; } = new List<TinNhanHoTro>();
     }
 } 
