@@ -1,6 +1,15 @@
--- =====================================================================
--- DATABASE DESIGN FOR SPA MANAGEMENT SYSTEM (VERSION 3 - UNICODE SUPPORT)
--- =====================================================================
+USE master;
+GO
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'QuanLySpa')
+BEGIN
+    ALTER DATABASE QuanLySpa SET SINGLE_USER WITH ROLLBACK IMMEDIATE; -- Đảm bảo không ai kết nối đến cơ sở dữ liệu
+    DROP DATABASE QuanLySpa; -- Xóa cơ sở dữ liệu
+END
+GO
+CREATE DATABASE QuanLySpa
+GO
+USE QuanLySpa
+GO
 
 -- Bảng lưu trữ vai trò người dùng (Khách hàng, Nhân viên, Quản lý)
 CREATE TABLE VaiTro (
