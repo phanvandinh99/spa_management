@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaManagement.Web", "SpaManagement.Web\SpaManagement.Web.csproj", "{69A60B6F-B54E-4128-AC0E-60B02AD42E8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69A60B6F-B54E-4128-AC0E-60B02AD42E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69A60B6F-B54E-4128-AC0E-60B02AD42E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69A60B6F-B54E-4128-AC0E-60B02AD42E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69A60B6F-B54E-4128-AC0E-60B02AD42E8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {073821A9-D328-436A-A2BC-8C3FB9E62474}
+	EndGlobalSection
+EndGlobal
