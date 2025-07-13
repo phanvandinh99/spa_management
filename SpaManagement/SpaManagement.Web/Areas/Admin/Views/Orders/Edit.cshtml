@@ -1,0 +1,32 @@
+@model SpaManagement.Web.Models.DonHang
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Cập nhật Đơn hàng";
+}
+<h2 class="text-primary mb-4">Cập nhật Đơn hàng</h2>
+<form asp-action="Edit" method="post" class="card p-4 shadow-sm bg-white">
+    <input type="hidden" asp-for="IdDonHang" />
+    <div class="mb-3">
+        <label class="form-label">Trạng thái</label>
+        <select asp-for="TrangThai" class="form-select" asp-items="ViewBag.TrangThai">
+            <option value="">-- Chọn trạng thái --</option>
+        </select>
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Khách hàng</label>
+        <input class="form-control" value="@Model.KhachHang?.HoTen" readonly />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ngày đặt</label>
+        <input class="form-control" value="@Model.NgayDatHang.ToString("dd/MM/yyyy HH:mm")" readonly />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Tổng tiền</label>
+        <input class="form-control" value="@Model.TongTien.ToString("N0") + " VNĐ"" readonly />
+    </div>
+    <div class="d-flex justify-content-end">
+        <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Quay lại</a>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </div>
+</form> 

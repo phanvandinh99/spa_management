@@ -42,7 +42,7 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
         public IActionResult Create()
         {
             var danhMucList = _context.DanhMucSanPham.ToList();
-            ViewBag.IdDanhMuc = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc");
+            ViewBag.IdDanhMuc = new SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc");
             return View();
         }
 

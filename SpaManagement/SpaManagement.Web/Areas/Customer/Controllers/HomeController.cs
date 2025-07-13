@@ -20,13 +20,11 @@ namespace SpaManagement.Web.Areas.Customer.Controllers
             // Lấy danh sách dịch vụ nổi bật với đánh giá
             var services = _context.DichVu
                 .Include(dv => dv.DanhGias)
-                .Take(3)
                 .ToList();
             
             // Lấy danh sách sản phẩm nổi bật với đánh giá
             var products = _context.SanPham
                 .Include(sp => sp.DanhGias)
-                .Take(4)
                 .ToList();
 
             ViewBag.Services = services;

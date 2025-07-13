@@ -1,0 +1,26 @@
+@model SpaManagement.Web.Models.DonHang
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Xóa Đơn hàng";
+}
+<h2 class="text-danger mb-4">Xóa Đơn hàng</h2>
+<div class="alert alert-warning">Bạn có chắc chắn muốn xóa đơn hàng này không?</div>
+<div class="card shadow-sm p-4 bg-white mb-3">
+    <dl class="row">
+        <dt class="col-sm-3">Mã đơn</dt>
+        <dd class="col-sm-9">@Model.IdDonHang</dd>
+        <dt class="col-sm-3">Khách hàng</dt>
+        <dd class="col-sm-9">@Model.KhachHang?.HoTen</dd>
+        <dt class="col-sm-3">Ngày đặt</dt>
+        <dd class="col-sm-9">@Model.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</dd>
+        <dt class="col-sm-3">Tổng tiền</dt>
+        <dd class="col-sm-9">@Model.TongTien.ToString("N0") VNĐ</dd>
+    </dl>
+</div>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="IdDonHang" />
+    <div class="d-flex justify-content-end">
+        <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Quay lại</a>
+        <button type="submit" class="btn btn-danger">Xóa</button>
+    </div>
+</form> 

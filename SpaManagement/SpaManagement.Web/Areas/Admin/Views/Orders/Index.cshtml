@@ -1,0 +1,45 @@
+@model IEnumerable<SpaManagement.Web.Models.DonHang>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Quản lý Đơn hàng";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-primary">Quản lý Đơn hàng</h2>
+</div>
+<table class="table table-bordered table-hover bg-white shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Tổng tiền</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Select((order, i) => new { order, i }))
+        {
+            <tr>
+                <td>@(item.i + 1)</td>
+                <td>@item.order.IdDonHang</td>
+                <td>@item.order.KhachHang?.HoTen</td>
+                <td>@item.order.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.order.TrangThai</td>
+                <td>@item.order.TongTien.ToString("N0") VNĐ</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.order.IdDonHang })" class="btn btn-sm btn-info me-1">
+                        <i class="fa fa-eye"></i> Chi tiết
+                    </a>
+                    <a href="@Url.Action("Edit", new { id = item.order.IdDonHang })" class="btn btn-sm btn-primary me-1">
+                        <i class="fa fa-edit"></i> Sửa
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.order.IdDonHang })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?');">
+                        <i class="fa fa-trash"></i> Xóa
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 
