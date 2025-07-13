@@ -79,6 +79,36 @@
                                         <small class="text-muted">@averageRating.ToString("F1")/5 (@ratingCount đánh giá)</small>
                                     </div>
                                 </div>
+                                
+                                <!-- Add to Cart Section -->
+                                <div class="add-to-cart-section mb-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <label for="quantity-@Model.IdSanPham" class="form-label fw-bold">Số lượng:</label>
+                                            <div class="input-group">
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" data-action="decrease" data-product-id="@Model.IdSanPham">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center" id="quantity-@Model.IdSanPham" value="1" min="1" max="@Model.SoLuongTon">
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" data-action="increase" data-product-id="@Model.IdSanPham">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <button class="btn btn-primary btn-lg w-100 add-to-cart" data-product-id="@Model.IdSanPham" @(Model.SoLuongTon <= 0 ? "disabled" : "")>
+                                                <i class="fa fa-shopping-cart me-2"></i>
+                                                @(Model.SoLuongTon <= 0 ? "Hết hàng" : "Thêm vào giỏ hàng")
+                                            </button>
+                                        </div>
+                                    </div>
+                                    @if (Model.SoLuongTon <= 0)
+                                    {
+                                        <div class="alert alert-warning mt-2">
+                                            <i class="fa fa-exclamation-triangle me-2"></i>Sản phẩm hiện tại đã hết hàng
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
                         @if (!string.IsNullOrEmpty(Model.MoTa))
@@ -206,5 +236,26 @@
         background-color: #f8f9fa;
         padding: 15px;
         border-radius: 10px;
+    }
+    .add-to-cart-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+    .quantity-btn {
+        border-radius: 0;
+    }
+    .quantity-btn:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+    }
+    .quantity-btn:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 </style> 

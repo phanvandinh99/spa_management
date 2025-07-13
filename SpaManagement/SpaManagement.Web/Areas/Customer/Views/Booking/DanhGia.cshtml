@@ -1,0 +1,60 @@
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Đánh giá dịch vụ";
+    var dichVu = ViewBag.DichVu as SpaManagement.Web.Models.DichVu;
+    int lichHenId = ViewBag.LichHenId ?? 0;
+}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-primary mb-4 text-center">Đánh giá dịch vụ</h2>
+                    <div class="mb-3 text-center">
+                        <span class="fw-bold">Dịch vụ:</span> <span class="text-primary">@dichVu?.TenDichVu</span>
+                    </div>
+                    @if (!ViewContext.ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewContext.ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                    <form asp-action="DanhGia" method="post">
+                        <input type="hidden" name="LichHenId" value="@lichHenId" />
+                        <div class="mb-3 text-center">
+                            <label class="form-label">Số sao <span class="text-danger">*</span></label>
+                            <div id="star-rating" class="mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <input type="radio" class="btn-check" name="SoSao" id="star@i" value="@i" autocomplete="off" @(i == 5 ? "checked" : null) />
+                                    <label class="btn btn-outline-warning" for="star@i"><i class="fa fa-star"></i> @i</label>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="BinhLuan" class="form-label">Bình luận (tùy chọn)</label>
+                            <textarea class="form-control" id="BinhLuan" name="BinhLuan" rows="3" placeholder="Nhập nhận xét về dịch vụ..."></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5 py-2">Gửi đánh giá</button>
+                            <a href="@Url.Action("MyBookings", "Booking", new { area = "Customer" })" class="btn btn-outline-secondary ms-2">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .btn-check:checked + .btn-outline-warning {
+        background-color: #ffc107;
+        color: #fff;
+        border-color: #ffc107;
+    }
+    .btn-outline-warning {
+        margin-right: 4px;
+    }
+</style> 

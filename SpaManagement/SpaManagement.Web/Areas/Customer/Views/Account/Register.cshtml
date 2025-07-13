@@ -1,54 +1,65 @@
 @{
     Layout = "../Shared/_Layout.cshtml";
-    ViewData["Title"] = "Đăng ký";
+    ViewData["Title"] = "Đăng ký tài khoản";
 }
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <h3 class="mb-4 text-center">Đăng ký tài khoản</h3>
-                    <form method="post" action="/Customer/Account/Register">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-primary mb-4 text-center">Đăng ký tài khoản khách hàng</h2>
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success text-center">@TempData["Success"]</div>
+                    }
+                    @if (!ViewContext.ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewContext.ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                    <form asp-action="Register" method="post">
                         <div class="mb-3">
-                            <label for="HoTen" class="form-label">Họ tên</label>
-                            <input type="text" class="form-control" id="HoTen" name="HoTen" required maxlength="100" placeholder="Nhập họ tên">
+                            <label for="HoTen" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="HoTen" name="HoTen" required />
                         </div>
                         <div class="mb-3">
-                            <label for="SoDienThoai" class="form-label">Số điện thoại</label>
-                            <input type="tel" class="form-control" id="SoDienThoai" name="SoDienThoai" maxlength="15" placeholder="Nhập số điện thoại">
+                            <label for="SoDienThoai" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="SoDienThoai" name="SoDienThoai" required />
                         </div>
                         <div class="mb-3">
-                            <label for="Email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="Email" name="Email" maxlength="100" placeholder="Nhập email">
+                            <label for="Email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="Email" name="Email" required />
                         </div>
                         <div class="mb-3">
-                            <label for="DiaChi" class="form-label">Địa chỉ</label>
-                            <input type="text" class="form-control" id="DiaChi" name="DiaChi" maxlength="255" placeholder="Nhập địa chỉ">
+                            <label for="TenDangNhap" class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="TenDangNhap" name="TenDangNhap" required />
                         </div>
                         <div class="mb-3">
-                            <label for="NgaySinh" class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" id="NgaySinh" name="NgaySinh">
+                            <label for="MatKhau" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="MatKhau" name="MatKhau" required />
                         </div>
                         <div class="mb-3">
-                            <label for="TenDangNhap" class="form-label">Tên đăng nhập</label>
-                            <input type="text" class="form-control" id="TenDangNhap" name="TenDangNhap" required maxlength="100" placeholder="Nhập tên đăng nhập">
+                            <label for="XacNhanMatKhau" class="form-label">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="XacNhanMatKhau" name="XacNhanMatKhau" required />
                         </div>
-                        <div class="mb-3">
-                            <label for="MatKhau" class="form-label">Mật khẩu</label>
-                            <input type="password" class="form-control" id="MatKhau" name="MatKhau" required maxlength="255" placeholder="Nhập mật khẩu">
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5 py-2">Đăng ký</button>
                         </div>
-                        <div class="mb-3">
-                            <label for="XacNhanMatKhau" class="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" class="form-control" id="XacNhanMatKhau" name="XacNhanMatKhau" required maxlength="255" placeholder="Nhập lại mật khẩu">
+                        <div class="text-center mt-3">
+                            <span>Bạn đã có tài khoản? <a href="@Url.Action("Login", "Account", new { area = "Customer" })">Đăng nhập</a></span>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Đăng ký</button>
                     </form>
-                    <div class="mt-3 text-center">
-                        <span>Đã có tài khoản?</span>
-                        <a href="@Url.Action("Login", "Account", new { area = "Customer" })">Đăng nhập</a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+<style>
+    .card { border-radius: 18px; }
+    .btn-primary { border-radius: 8px; font-weight: 500; font-size: 1.1em; }
+    .form-label { font-weight: 500; }
+</style> 

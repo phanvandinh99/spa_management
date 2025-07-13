@@ -1,0 +1,96 @@
+@model IEnumerable<SpaManagement.Web.Models.LichHen>
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Lịch hẹn của tôi";
+}
+<div class="container py-5">
+    <h2 class="text-primary mb-4 text-center">Lịch hẹn của tôi</h2>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center">@TempData["Error"]</div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">Bạn chưa có lịch hẹn nào.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Dịch vụ</th>
+                        <th>Thời gian</th>
+                        <th>Nhân viên</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Select((lh, i) => new { lh, i }))
+                    {
+                        <tr>
+                            <td>@(item.i + 1)</td>
+                            <td>@item.lh.DichVu?.TenDichVu</td>
+                            <td>
+                                @item.lh.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm")<br />
+                                <span class="text-muted small">(@item.lh.ThoiGianBatDau.ToString("dddd", new System.Globalization.CultureInfo("vi-VN")))</span>
+                            </td>
+                            <td>@(item.lh.NhanVien?.HoTen ?? "-")</td>
+                            <td>
+                                @if (item.lh.TrangThai == "DaDat")
+                                {
+                                    <span class="badge bg-primary">Đã đặt</span>
+                                }
+                                else if (item.lh.TrangThai == "DaHoanThanh")
+                                {
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                }
+                                else if (item.lh.TrangThai == "DaHuy")
+                                {
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                }
+                                else if (item.lh.TrangThai == "KhongDen")
+                                {
+                                    <span class="badge bg-warning text-dark">Không đến</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.lh.TrangThai</span>
+                                }
+                            </td>
+                            <td>@item.lh.GhiChu</td>
+                            <td>
+                                @if (item.lh.TrangThai == "DaDat" && (item.lh.ThoiGianBatDau - DateTime.Now).TotalMinutes > 60)
+                                {
+                                    <form asp-action="HuyLich" method="post" style="display:inline">
+                                        <input type="hidden" name="id" value="@item.lh.IdLichHen" />
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
+                                            <i class="fa fa-times"></i> Hủy lịch
+                                        </button>
+                                    </form>
+                                }
+                                @if (item.lh.TrangThai == "DaHoanThanh" && !(item.lh.DichVu?.DanhGias?.Any(dg => dg.IdKhachHang == item.lh.IdKhachHang) ?? false))
+                                {
+                                    <a href="@Url.Action("DanhGia", "Booking", new { area = "Customer", id = item.lh.IdLichHen })" class="btn btn-sm btn-warning ms-1">
+                                        <i class="fa fa-star"></i> Đánh giá
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+<style>
+    .table th, .table td { vertical-align: middle !important; }
+    .badge { font-size: 1em; }
+</style> 

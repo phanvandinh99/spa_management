@@ -1,5 +1,7 @@
 @{
     ViewData["Title"] = "Trang chủ - Khách hàng";
+    var services = ViewBag.Services as List<SpaManagement.Web.Models.DichVu> ?? new List<SpaManagement.Web.Models.DichVu>();
+    var products = ViewBag.Products as List<SpaManagement.Web.Models.SanPham> ?? new List<SpaManagement.Web.Models.SanPham>();
 }
 
 <div class="container-fluid">
@@ -12,30 +14,36 @@
                 <div class="col-md-3 mb-3">
                     <div class="card bg-white shadow-sm">
                         <div class="card-body text-center">
-                            <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                            <i class="fa fa-calendar-o fa-3x text-primary mb-3"></i>
                             <h5 class="card-title">Đặt lịch hẹn</h5>
                             <p class="card-text">Đặt lịch hẹn dịch vụ spa nhanh chóng</p>
-                            <a href="#" class="btn btn-primary">Đặt lịch ngay</a>
+                            <a href="@Url.Action("Index", "Booking", new { area = "Customer" })" class="btn btn-primary">
+                                <i class="fa fa-calendar me-2"></i>Đặt lịch ngay
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
                     <div class="card bg-white shadow-sm">
                         <div class="card-body text-center">
-                            <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                            <i class="fa fa-shopping-cart fa-3x text-success mb-3"></i>
                             <h5 class="card-title">Mua sản phẩm</h5>
                             <p class="card-text">Mua sản phẩm chăm sóc da chất lượng</p>
-                            <a href="#" class="btn btn-success">Mua sản phẩm</a>
+                            <a href="@Url.Action("Index", "Products", new { area = "Customer" })" class="btn btn-success">
+                                <i class="fa fa-shopping-bag me-2"></i>Mua sản phẩm
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
                     <div class="card bg-white shadow-sm">
                         <div class="card-body text-center">
-                            <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                            <i class="fa fa-star fa-3x text-warning mb-3"></i>
                             <h5 class="card-title">Đánh giá</h5>
                             <p class="card-text">Đánh giá dịch vụ và sản phẩm</p>
-                            <a href="#" class="btn btn-warning">Đánh giá ngay</a>
+                            <a href="@Url.Action("Index", "Services", new { area = "Customer" })" class="btn btn-warning">
+                                <i class="fa fa-star me-2"></i>Đánh giá ngay
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -45,109 +53,195 @@
 
     <!-- Services Section -->
     <div class="container py-5">
-        <h2 class="text-center mb-5">Dịch vụ của chúng tôi</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Dịch vụ của chúng tôi</h2>
+            <a href="@Url.Action("Index", "Services", new { area = "Customer" })" class="btn btn-outline-primary">
+                <i class="fa fa-eye me-2"></i>Xem tất cả
+            </a>
+        </div>
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/service1.jpg" class="card-img-top" alt="Massage" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">Massage trị liệu</h5>
-                        <p class="card-text">Liệu trình massage giúp thư giãn, giảm đau nhức và cải thiện tuần hoàn máu.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">600,000 VNĐ</span>
-                            <a href="#" class="btn btn-outline-primary">Đặt lịch</a>
+            @foreach (var service in services)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm service-card">
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fa fa-spa fa-4x text-primary"></i>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary">@service.TenDichVu</h5>
+                            <p class="card-text flex-grow-1">@(service.MoTa ?? "Dịch vụ chăm sóc sắc đẹp chuyên nghiệp")</p>
+                            
+                            <!-- Rating -->
+                            <div class="product-rating mb-3">
+                                @{
+                                    var averageRating = service.DanhGias?.Any() == true 
+                                        ? service.DanhGias.Average(dg => dg.SoSao) 
+                                        : 0;
+                                    var ratingCount = service.DanhGias?.Count ?? 0;
+                                }
+                                <div class="d-flex align-items-center">
+                                    <div class="stars me-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= averageRating)
+                                            {
+                                                <i class="fa fa-star text-warning"></i>
+                                            }
+                                            else if (i - averageRating < 1)
+                                            {
+                                                <i class="fa fa-star-half-empty text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o text-warning"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <small class="text-muted">@averageRating.ToString("F1")/5 (@ratingCount đánh giá)</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">@service.Gia.ToString("N0") VNĐ</span>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("Details", "Services", new { area = "Customer", id = service.IdDichVu })" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fa fa-info-circle me-1"></i>Chi tiết
+                                    </a>
+                                    <a href="@Url.Action("Index", "Booking", new { area = "Customer", serviceId = service.IdDichVu })" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fa fa-calendar me-1"></i>Đặt lịch
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/service2.jpg" class="card-img-top" alt="Facial" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">Chăm sóc da chuyên sâu</h5>
-                        <p class="card-text">Làm sạch sâu lỗ chân lông, loại bỏ mụn cám, giúp da sáng mịn.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">850,000 VNĐ</span>
-                            <a href="#" class="btn btn-outline-primary">Đặt lịch</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/service3.jpg" class="card-img-top" alt="Hair Treatment" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">Triệt lông công nghệ cao</h5>
-                        <p class="card-text">Liệu trình 10 buổi, bảo hành 5 năm với công nghệ Laser Diode.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">1,500,000 VNĐ</span>
-                            <a href="#" class="btn btn-outline-primary">Đặt lịch</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 
     <!-- Products Section -->
     <div class="container py-5 bg-light">
-        <h2 class="text-center mb-5">Sản phẩm nổi bật</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Sản phẩm nổi bật</h2>
+            <a href="@Url.Action("Index", "Products", new { area = "Customer" })" class="btn btn-outline-primary">
+                <i class="fa fa-eye me-2"></i>Xem tất cả
+            </a>
+        </div>
         <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/product1.jpg" class="card-img-top" alt="Serum" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="card-title">Serum cấp ẩm Hyaluronic Acid</h6>
-                        <p class="card-text small">Serum giúp cấp ẩm sâu, cho làn da căng bóng.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">550,000 VNĐ</span>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Thêm vào giỏ</a>
+            @foreach (var product in products)
+            {
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm product-card">
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            @if (!string.IsNullOrEmpty(product.HinhAnhURL))
+                            {
+                                <img src="@product.HinhAnhURL" alt="@product.TenSanPham" class="img-fluid" style="max-height: 180px; object-fit: contain;">
+                            }
+                            else
+                            {
+                                <i class="fa fa-image fa-4x text-muted"></i>
+                            }
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title text-primary">@product.TenSanPham</h6>
+                            <p class="card-text small flex-grow-1">@(product.MoTa ?? "Sản phẩm chăm sóc da chất lượng cao")</p>
+                            
+                            <!-- Rating -->
+                            <div class="product-rating mb-3">
+                                @{
+                                    var averageRating = product.DanhGias?.Any() == true 
+                                        ? product.DanhGias.Average(dg => dg.SoSao) 
+                                        : 0;
+                                    var ratingCount = product.DanhGias?.Count ?? 0;
+                                }
+                                <div class="d-flex align-items-center">
+                                    <div class="stars me-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= averageRating)
+                                            {
+                                                <i class="fa fa-star text-warning"></i>
+                                            }
+                                            else if (i - averageRating < 1)
+                                            {
+                                                <i class="fa fa-star-half-empty text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o text-warning"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <small class="text-muted">@averageRating.ToString("F1")/5 (@ratingCount đánh giá)</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">@product.Gia.ToString("N0") VNĐ</span>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("Details", "Products", new { area = "Customer", id = product.IdSanPham })" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fa fa-info-circle me-1"></i>Chi tiết
+                                    </a>
+                                    <button class="btn btn-primary btn-sm add-to-cart" data-product-id="@product.IdSanPham" @(product.SoLuongTon <= 0 ? "disabled" : "")>
+                                        <i class="fa fa-shopping-cart me-1"></i>
+                                        @(product.SoLuongTon <= 0 ? "Hết hàng" : "Thêm")
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/product2.jpg" class="card-img-top" alt="Sunscreen" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="card-title">Kem chống nắng SPF 50+</h6>
-                        <p class="card-text small">Bảo vệ da tối ưu, không gây bết dính.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">480,000 VNĐ</span>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Thêm vào giỏ</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/product3.jpg" class="card-img-top" alt="Lotion" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="card-title">Sữa dưỡng thể Oliu</h6>
-                        <p class="card-text small">Dưỡng ẩm, làm mềm và mịn da toàn thân.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">350,000 VNĐ</span>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Thêm vào giỏ</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="~/Customer/images/product4.jpg" class="card-img-top" alt="Mask" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="card-title">Mặt nạ dưỡng ẩm</h6>
-                        <p class="card-text small">Mặt nạ dưỡng ẩm chuyên sâu cho da khô.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">120,000 VNĐ</span>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Thêm vào giỏ</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        margin-bottom: 0;
+    }
+    .service-card, .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+    }
+    .service-card:hover, .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    .product-rating {
+        border-top: 1px solid #e9ecef;
+        padding-top: 10px;
+    }
+    .stars {
+        font-size: 0.9em;
+    }
+    .btn-group .btn {
+        border-radius: 6px;
+    }
+    .btn-group .btn:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .btn-group .btn:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    .card-img-top img {
+        max-width: 100%;
+        max-height: 180px;
+        object-fit: contain;
+    }
+</style>
 
 @section Scripts {
     <script src="~/Customer/js/customer.js"></script>

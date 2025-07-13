@@ -1,5 +1,86 @@
 @{
     Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Đặt lịch hẹn";
+    var services = ViewBag.Services as List<SpaManagement.Web.Models.DichVu>;
+    var employees = ViewBag.Employees as List<SpaManagement.Web.Models.NhanVien>;
+    int? selectedServiceId = ViewBag.SelectedServiceId as int?;
 }
-<h2>Đặt lịch hẹn</h2>
-<p>Đây là trang Đặt lịch hẹn.</p> 
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-primary mb-4 text-center">Đặt lịch hẹn dịch vụ</h2>
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success text-center">@TempData["Success"]</div>
+                    }
+                    @if (!ViewContext.ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewContext.ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                    <form asp-action="Index" method="post">
+                        <div class="mb-3">
+                            <label for="IdDichVu" class="form-label">Chọn dịch vụ <span class="text-danger">*</span></label>
+                            <select class="form-select" id="IdDichVu" name="IdDichVu" required>
+                                <option value="">-- Chọn dịch vụ --</option>
+                                @foreach (var s in services)
+                                {
+                                    if (selectedServiceId == s.IdDichVu)
+                                    {
+                                        <option value="@s.IdDichVu" selected>@s.TenDichVu (@s.Gia.ToString("N0") VNĐ)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@s.IdDichVu">@s.TenDichVu (@s.Gia.ToString("N0") VNĐ)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ThoiGianBatDau" class="form-label">Chọn ngày & giờ <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="ThoiGianBatDau" name="ThoiGianBatDau" required min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")">
+                        </div>
+                        <div class="mb-3">
+                            <label for="IdNhanVien" class="form-label">Chọn nhân viên (tùy chọn)</label>
+                            <select class="form-select" id="IdNhanVien" name="IdNhanVien">
+                                <option value="">-- Bất kỳ nhân viên nào --</option>
+                                @foreach (var nv in employees)
+                                {
+                                    <option value="@nv.IdNhanVien">@nv.HoTen</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="GhiChu" class="form-label">Ghi chú (tùy chọn)</label>
+                            <textarea class="form-control" id="GhiChu" name="GhiChu" rows="3" placeholder="Nhập ghi chú nếu có..."></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5 py-2">Đặt lịch</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 18px;
+    }
+    .btn-primary {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 1.1em;
+    }
+    .form-label {
+        font-weight: 500;
+    }
+</style> 

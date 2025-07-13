@@ -17,4 +17,4 @@ namespace SpaManagement.Web.Models
         // Navigation properties
         public virtual ICollection<SanPham> SanPhams { get; set; } = new List<SanPham>();
     }
-} 
+}

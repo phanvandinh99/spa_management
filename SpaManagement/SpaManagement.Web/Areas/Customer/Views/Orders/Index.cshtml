@@ -1,0 +1,126 @@
+@model IEnumerable<SpaManagement.Web.Models.DonHang>
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+<div class="container py-5">
+    <h2 class="text-primary mb-4 text-center">Đơn hàng của tôi</h2>
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center">@TempData["Error"]</div>
+    }
+    
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fa fa-shopping-bag fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Chưa có đơn hàng nào</h4>
+            <p class="text-muted">Bạn chưa có đơn hàng nào trong hệ thống</p>
+            <a href="@Url.Action("Index", "Products", new { area = "Customer" })" class="btn btn-primary">
+                <i class="fa fa-shopping-cart me-2"></i>Mua sắm ngay
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var donHang in Model)
+            {
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                <i class="fa fa-shopping-cart me-2"></i>Đơn hàng #@donHang.IdDonHang
+                            </h6>
+                            <span class="badge @GetStatusBadgeClass(donHang.TrangThai)">
+                                @GetStatusText(donHang.TrangThai)
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Ngày đặt:</small>
+                                    <div class="fw-bold">@donHang.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Tổng tiền:</small>
+                                    <div class="fw-bold text-primary">@donHang.TongTien.ToString("N0") VNĐ</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Địa chỉ giao hàng:</small>
+                                <div class="text-truncate">@donHang.DiaChiGiaoHang</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Sản phẩm (@donHang.ChiTietDonHangs.Count):</small>
+                                <div class="product-list">
+                                    @foreach (var chiTiet in donHang.ChiTietDonHangs.Take(3))
+                                    {
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-truncate">@chiTiet.SanPham.TenSanPham</span>
+                                            <small class="text-muted">x@chiTiet.SoLuong</small>
+                                        </div>
+                                    }
+                                    @if (donHang.ChiTietDonHangs.Count > 3)
+                                    {
+                                        <small class="text-muted">... và @(donHang.ChiTietDonHangs.Count - 3) sản phẩm khác</small>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("OrderDetails", "Orders", new { area = "Customer", id = donHang.IdDonHang })" class="btn btn-outline-primary btn-sm">
+                                    <i class="fa fa-eye me-2"></i>Xem chi tiết
+                                </a>
+                                @if (donHang.TrangThai == "ChoThanhToan" || donHang.TrangThai == "DangXuLy")
+                                {
+                                    <form asp-action="Cancel" method="post" style="display:inline">
+                                        <input type="hidden" name="id" value="@donHang.IdDonHang" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+                                            <i class="fa fa-times me-2"></i>Hủy đơn hàng
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(string trangThai)
+    {
+        return trangThai switch
+        {
+            "ChoThanhToan" => "bg-warning text-dark",
+            "DangXuLy" => "bg-info",
+            "DangGiao" => "bg-primary",
+            "DaGiao" => "bg-success",
+            "DaHuy" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+    
+    private string GetStatusText(string trangThai)
+    {
+        return trangThai switch
+        {
+            "ChoThanhToan" => "Chờ thanh toán",
+            "DangXuLy" => "Đang xử lý",
+            "DangGiao" => "Đang giao",
+            "DaGiao" => "Đã giao",
+            "DaHuy" => "Đã hủy",
+            _ => trangThai
+        };
+    }
+} 

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SpaManagement.Web.Models;
 using SpaManagement.Web.Models.EF;
 
@@ -16,11 +17,17 @@ namespace SpaManagement.Web.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            // Lấy danh sách dịch vụ nổi bật
-            var services = _context.DichVu.Take(3).ToList();
+            // Lấy danh sách dịch vụ nổi bật với đánh giá
+            var services = _context.DichVu
+                .Include(dv => dv.DanhGias)
+                .Take(3)
+                .ToList();
             
-            // Lấy danh sách sản phẩm nổi bật
-            var products = _context.SanPham.Take(4).ToList();
+            // Lấy danh sách sản phẩm nổi bật với đánh giá
+            var products = _context.SanPham
+                .Include(sp => sp.DanhGias)
+                .Take(4)
+                .ToList();
 
             ViewBag.Services = services;
             ViewBag.Products = products;

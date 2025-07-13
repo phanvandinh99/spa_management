@@ -108,10 +108,20 @@
                                     </div>
                                 </div>
                                 <div class="mt-auto">
-                                    <a href="@Url.Action("Details", "Products", new { area = "Customer", id = product.IdSanPham })" 
-                                       class="btn btn-primary w-100">
-                                        <i class="fa fa-info-circle me-2"></i>Chi tiết
-                                    </a>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <a href="@Url.Action("Details", "Products", new { area = "Customer", id = product.IdSanPham })" 
+                                               class="btn btn-outline-primary w-100">
+                                                <i class="fa fa-info-circle me-2"></i>Chi tiết
+                                            </a>
+                                        </div>
+                                        <div class="col-6">
+                                            <button class="btn btn-primary w-100 add-to-cart" data-product-id="@product.IdSanPham" @(product.SoLuongTon <= 0 ? "disabled" : "")>
+                                                <i class="fa fa-shopping-cart me-2"></i>
+                                                @(product.SoLuongTon <= 0 ? "Hết hàng" : "Thêm")
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
