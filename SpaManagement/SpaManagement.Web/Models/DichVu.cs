@@ -23,8 +23,9 @@ namespace SpaManagement.Web.Models
         [Range(1, 480, ErrorMessage = "Thời lượng phải từ 1-480 phút")]
         public int? ThoiLuongPhut { get; set; }
 
+        [Required(ErrorMessage = "Danh mục là bắt buộc")]
         [Display(Name = "Danh mục")]
-        public int? IdDanhMuc { get; set; }
+        public int IdDanhMuc { get; set; }
 
         // Navigation properties
         public virtual DanhMucDichVu? DanhMucDichVu { get; set; }

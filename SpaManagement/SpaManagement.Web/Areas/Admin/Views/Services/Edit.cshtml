@@ -1,0 +1,75 @@
+@model SpaManagement.Web.Models.DichVu
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Sửa dịch vụ";
+    var categories = ViewBag.Categories as List<SpaManagement.Web.Models.DanhMucDichVu>;
+}
+<h2 class="text-primary mb-4">Sửa dịch vụ</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <h5>Có lỗi xảy ra:</h5>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+}
+
+<form action="@Url.Action("Edit", "Services", new { area = "Admin" })" method="post" class="card p-4 shadow-sm bg-white">
+    <input type="hidden" name="IdDichVu" value="@Model?.IdDichVu" />
+    
+    <div class="mb-3">
+        <label class="form-label">Tên dịch vụ *</label>
+        <input name="TenDichVu" value="@Model?.TenDichVu" class="form-control" required />
+        <span asp-validation-for="TenDichVu" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Danh mục *</label>
+        <select name="IdDanhMuc" class="form-select" required>
+            <option value="">-- Chọn danh mục --</option>
+            @if (categories != null)
+            {
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat.IdDanhMuc" @(cat.IdDanhMuc == Model?.IdDanhMuc ? "selected" : "")>@cat.TenDanhMuc</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="IdDanhMuc" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Giá (VNĐ) *</label>
+        <input name="Gia" type="number" min="0" step="0.01" value="@Model?.Gia" class="form-control" required />
+        <span asp-validation-for="Gia" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Thời lượng (phút) *</label>
+        <input name="ThoiLuongPhut" type="number" min="1" value="@Model?.ThoiLuongPhut" class="form-control" required />
+        <span asp-validation-for="ThoiLuongPhut" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Mô tả</label>
+        <textarea name="MoTa" class="form-control" rows="3">@Model?.MoTa</textarea>
+        <span asp-validation-for="MoTa" class="text-danger"></span>
+    </div>
+    
+    <div class="d-flex justify-content-end">
+        <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Quay lại</a>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // Debug form submission
+        $('form').on('submit', function(e) {
+            console.log('Form submitting...');
+            var formData = $(this).serialize();
+            console.log('Form data:', formData);
+            console.log('Form action:', $(this).attr('action'));
+        });
+    </script>
+} 

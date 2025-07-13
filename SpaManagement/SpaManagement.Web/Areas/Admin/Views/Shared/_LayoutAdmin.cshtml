@@ -1,0 +1,87 @@
+@{
+    Layout = null;
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "Admin";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Quản trị Spa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background: #f8f9fa; }
+        .admin-navbar { background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); }
+        .admin-navbar .navbar-brand, .admin-navbar .nav-link, .admin-navbar .dropdown-toggle { color: #fff !important; }
+        .admin-navbar .nav-link.active, .admin-navbar .nav-link:hover { color: #ffd700 !important; }
+        .admin-navbar .dropdown-menu { min-width: 150px; }
+        .admin-content { padding: 30px 0; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg admin-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+                <i class="fa fa-cogs me-2"></i>Quản trị Spa
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                           href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+                            <i class="fa fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Services" ? "active" : "")"
+                           href="@Url.Action("Index", "Services", new { area = "Admin" })">
+                            <i class="fa fa-spa me-1"></i>Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")"
+                           href="@Url.Action("Index", "Products", new { area = "Admin" })">
+                            <i class="fa fa-cube me-1"></i>Sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")"
+                           href="@Url.Action("Index", "Orders", new { area = "Admin" })">
+                            <i class="fa fa-shopping-bag me-1"></i>Đơn hàng
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user-circle me-1"></i>@userName
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("Logout", "Account", new { area = "Admin" })">
+                                    <i class="fa fa-sign-out me-2"></i>Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="container admin-content">
+        @RenderBody()
+    </main>
+    <footer class="text-center text-muted py-4">
+        &copy; @DateTime.Now.Year Quản trị Spa. All rights reserved.
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html> 

@@ -1,0 +1,52 @@
+@model IEnumerable<SpaManagement.Web.Models.DichVu>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Quản lý Dịch vụ";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-primary">Quản lý Dịch vụ</h2>
+    <a href="@Url.Action("Create")" class="btn btn-success">
+        <i class="fa fa-plus me-1"></i> Thêm dịch vụ
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<table class="table table-bordered table-hover bg-white shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Tên dịch vụ</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th>Thời lượng (phút)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Select((dv, i) => new { dv, i }))
+        {
+            <tr>
+                <td>@(item.i + 1)</td>
+                <td>@item.dv.TenDichVu</td>
+                <td>@item.dv.DanhMucDichVu?.TenDanhMuc</td>
+                <td>@item.dv.Gia.ToString("N0") VNĐ</td>
+                <td>@item.dv.ThoiLuongPhut</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = item.dv.IdDichVu })" class="btn btn-sm btn-primary me-1">
+                        <i class="fa fa-edit"></i> Sửa
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.dv.IdDichVu })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?');">
+                        <i class="fa fa-trash"></i> Xóa
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 
