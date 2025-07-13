@@ -14,23 +14,6 @@
     </div>
 }
 
-<!-- Test form đơn giản -->
-<div class="card p-4 shadow-sm bg-light mb-4">
-    <h5>Test Form</h5>
-    <form action="@Url.Action("TestCreate", "Services", new { area = "Admin" })" method="post">
-        <input type="text" name="test" value="test value" />
-        <button type="submit" class="btn btn-warning">Test Submit</button>
-    </form>
-</div>
-
-<!-- Simple test form -->
-<div class="card p-4 shadow-sm bg-light mb-4">
-    <h5>Simple Test Form</h5>
-    <form action="@Url.Action("SimpleTest", "Services", new { area = "Admin" })" method="post">
-        <button type="submit" class="btn btn-info">Simple Test</button>
-    </form>
-</div>
-
 <form action="@Url.Action("Create", "Services", new { area = "Admin" })" method="post" class="card p-4 shadow-sm bg-white">
     <div class="mb-3">
         <label class="form-label">Tên dịch vụ *</label>

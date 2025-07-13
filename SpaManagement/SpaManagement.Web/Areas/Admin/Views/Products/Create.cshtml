@@ -1,0 +1,56 @@
+@model SpaManagement.Web.Models.SanPham
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Thêm sản phẩm";
+}
+<h2 class="text-primary mb-4">Thêm sản phẩm mới</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <h5>Có lỗi xảy ra:</h5>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+}
+
+<form asp-action="Create" enctype="multipart/form-data" method="post" class="card p-4 shadow-sm bg-white">
+    <div class="mb-3">
+        <label class="form-label">Tên sản phẩm *</label>
+        <input asp-for="TenSanPham" class="form-control" required />
+        <span asp-validation-for="TenSanPham" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Danh mục *</label>
+        <select asp-for="IdDanhMuc" class="form-select" asp-items="ViewBag.IdDanhMuc" required>
+            <option value="">-- Chọn danh mục --</option>
+        </select>
+        <span asp-validation-for="IdDanhMuc" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Giá (VNĐ) *</label>
+        <input asp-for="Gia" type="number" min="0" step="0.01" class="form-control" required />
+        <span asp-validation-for="Gia" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Số lượng tồn *</label>
+        <input asp-for="SoLuongTon" type="number" min="0" class="form-control" required />
+        <span asp-validation-for="SoLuongTon" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Mô tả</label>
+        <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="MoTa" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hình ảnh</label>
+        <input type="file" name="HinhAnh" class="form-control" accept="image/*" />
+    </div>
+    <div class="d-flex justify-content-end">
+        <a href="@Url.Action("Index")" class="btn btn-secondary me-2">Quay lại</a>
+        <button type="submit" class="btn btn-success">Lưu</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

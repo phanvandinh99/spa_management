@@ -1,0 +1,62 @@
+@model IEnumerable<SpaManagement.Web.Models.SanPham>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-primary">Quản lý Sản phẩm</h2>
+    <a href="@Url.Action("Create")" class="btn btn-success">
+        <i class="fa fa-plus me-1"></i> Thêm sản phẩm
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<table class="table table-bordered table-hover bg-white shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th>Số lượng tồn</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Select((sp, i) => new { sp, i }))
+        {
+            <tr>
+                <td>@(item.i + 1)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.sp.HinhAnhURL))
+                    {
+                        <img src="@item.sp.HinhAnhURL" alt="Ảnh sản phẩm" style="max-width:60px;max-height:60px;object-fit:cover;" />
+                    }
+                </td>
+                <td>@item.sp.TenSanPham</td>
+                <td>@item.sp.DanhMucSanPham?.TenDanhMuc</td>
+                <td>@item.sp.Gia.ToString("N0") VNĐ</td>
+                <td>@item.sp.SoLuongTon</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.sp.IdSanPham })" class="btn btn-sm btn-info me-1">
+                        <i class="fa fa-eye"></i> Chi tiết
+                    </a>
+                    <a href="@Url.Action("Edit", new { id = item.sp.IdSanPham })" class="btn btn-sm btn-primary me-1">
+                        <i class="fa fa-edit"></i> Sửa
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.sp.IdSanPham })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?');">
+                        <i class="fa fa-trash"></i> Xóa
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 

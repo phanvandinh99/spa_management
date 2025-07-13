@@ -115,6 +115,9 @@ namespace SpaManagement.Web.Models.EF
                 entity.Property(e => e.MaKhuyenMai).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.MoTa).IsRequired();
                 entity.Property(e => e.ApDungCho).HasDefaultValue("TatCa");
+                // Thêm cấu hình decimal
+                entity.Property(e => e.PhanTramGiamGia).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.SoTienGiamGia).HasColumnType("decimal(18,2)");
             });
 
             modelBuilder.Entity<DonHang>(entity =>
