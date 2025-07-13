@@ -7,6 +7,11 @@
     z-index: 1000;
     transition: background 0.3s;
     color: #000000 !important;
+    top: 0;
+    left: 0;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
 }
 
 .custom-navbar a,
@@ -25,5 +30,57 @@
 }
 
 .hero-section {
-    padding-top: 90px; /* Để không bị che bởi navbar cố định */
+    padding-top: 90px;
+}
+
+/* Navbar cao hơn khi ở đầu trang, thu nhỏ khi cuộn */
+.custom-navbar {
+    height: 80px;
+    line-height: 80px;
+    transition: height 0.3s, line-height 0.3s, box-shadow 0.3s;
+}
+.custom-navbar.shrink {
+    height: 56px;
+    line-height: 56px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+/* Đảm bảo chỉ main-content bị đẩy xuống, navbar luôn sát trên cùng */
+.main-content {
+    margin-top: 100px !important;
+    transition: margin-top 0.3s;
+}
+.main-content.shrink {
+    margin-top: 56px !important;
+} 
+
+/* Sửa dropdown menu không bị đẩy xuống theo chiều cao navbar */
+.custom-navbar .dropdown-menu {
+    margin-top: 0 !important;
+    top: 100%; /* luôn sát mép dưới của navbar */
+    left: auto;
+    right: 0;
+    min-width: 180px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.custom-navbar .dropdown-menu .dropdown-item {
+    line-height: 1.5 !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Đảm bảo nav-link và brand căn giữa theo chiều cao navbar */
+.custom-navbar .navbar-brand,
+.custom-navbar .nav-link {
+    height: 80px;
+    line-height: 80px;
+    display: flex;
+    align-items: center;
+}
+.custom-navbar.shrink .navbar-brand,
+.custom-navbar.shrink .nav-link {
+    height: 56px;
+    line-height: 56px;
 } 
