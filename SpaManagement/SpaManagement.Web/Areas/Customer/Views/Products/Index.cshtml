@@ -1,5 +1,189 @@
+@model IEnumerable<SpaManagement.Web.Models.SanPham>
 @{
     Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Sản phẩm";
 }
-<h2>Sản phẩm nổi bật</h2>
-<p>Đây là trang Sản phẩm.</p> 
+
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-4 text-primary mb-3">Sản phẩm nổi bật</h1>
+            <p class="lead text-muted">Khám phá các sản phẩm chăm sóc sắc đẹp chất lượng cao</p>
+        </div>
+
+        <!-- Category Filter -->
+        @if (ViewBag.Categories != null)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-center">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Category", "Products", new { area = "Customer" })" 
+                               class="btn @(ViewBag.SelectedCategory == null ? "btn-primary" : "btn-outline-primary")">
+                                Tất cả
+                            </a>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <a href="@Url.Action("Category", "Products", new { area = "Customer", categoryId = category.IdDanhMuc })" 
+                                   class="btn @(ViewBag.SelectedCategory == category.IdDanhMuc ? "btn-primary" : "btn-outline-primary")">
+                                    @category.TenDanhMuc
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Products Grid -->
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 product-card shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <div class="product-image mb-3 text-center">
+                                    @if (!string.IsNullOrEmpty(product.HinhAnhURL))
+                                    {
+                                        <img src="@product.HinhAnhURL" alt="@product.TenSanPham" class="img-fluid rounded" style="max-height: 180px; object-fit: contain;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="no-image bg-light rounded d-flex align-items-center justify-content-center" style="height: 180px;">
+                                            <i class="fa fa-picture-o fa-3x text-muted"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <h5 class="card-title text-primary mb-2">@product.TenSanPham</h5>
+                                @if (!string.IsNullOrEmpty(product.MoTa))
+                                {
+                                    <p class="card-text text-muted mb-3">@product.MoTa</p>
+                                }
+                                <div class="product-details mb-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted">Danh mục:</small>
+                                            <div class="fw-bold">@(product.DanhMucSanPham?.TenDanhMuc ?? "Chưa phân loại")</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Tồn kho:</small>
+                                            <div class="fw-bold">@product.SoLuongTon</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-rating mb-3">
+                                    @{
+                                        var averageRating = product.DanhGias?.Any() == true 
+                                            ? product.DanhGias.Average(dg => dg.SoSao) 
+                                            : 0;
+                                        var ratingCount = product.DanhGias?.Count ?? 0;
+                                    }
+                                    <div class="d-flex align-items-center">
+                                        <div class="stars me-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= averageRating)
+                                                {
+                                                    <i class="fa fa-star text-warning"></i>
+                                                }
+                                                else if (i - averageRating < 1)
+                                                {
+                                                    <i class="fa fa-star-half-empty text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star-o text-warning"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <small class="text-muted">(@ratingCount đánh giá)</small>
+                                    </div>
+                                </div>
+                                <div class="product-price mb-3">
+                                    <div class="price-tag">
+                                        <span class="currency">VNĐ</span>
+                                        <span class="amount">@product.Gia.ToString("N0")</span>
+                                    </div>
+                                </div>
+                                <div class="mt-auto">
+                                    <a href="@Url.Action("Details", "Products", new { area = "Customer", id = product.IdSanPham })" 
+                                       class="btn btn-primary w-100">
+                                        <i class="fa fa-info-circle me-2"></i>Chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
+                        <p class="text-muted">Vui lòng thử lại với bộ lọc khác</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    .product-image img {
+        max-width: 100%;
+        max-height: 180px;
+        object-fit: contain;
+    }
+    .no-image {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .price-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        text-align: center;
+        display: inline-block;
+    }
+    .price-tag .currency {
+        font-size: 0.8em;
+        opacity: 0.9;
+    }
+    .price-tag .amount {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    .stars {
+        font-size: 0.9em;
+    }
+    .btn-group .btn {
+        border-radius: 25px;
+        margin: 0 2px;
+    }
+    .product-details {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    .product-rating {
+        border-top: 1px solid #e9ecef;
+        padding-top: 10px;
+    }
+</style> 

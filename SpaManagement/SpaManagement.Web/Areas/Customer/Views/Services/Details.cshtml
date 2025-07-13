@@ -1,0 +1,306 @@
+@model SpaManagement.Web.Models.DichVu
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = Model.TenDichVu;
+}
+
+<div class="container-fluid py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home", new { area = "Customer" })">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Services", new { area = "Customer" })">Dịch vụ</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.TenDichVu</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Service Details -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Service Header -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <h1 class="display-5 text-primary mb-3">@Model.TenDichVu</h1>
+                                <div class="service-meta mb-3">
+                                    <span class="badge bg-primary me-2">
+                                        <i class="fa fa-tag me-1"></i>@(Model.DanhMucDichVu?.TenDanhMuc ?? "Chưa phân loại")
+                                    </span>
+                                    @if (Model.ThoiLuongPhut.HasValue)
+                                    {
+                                        <span class="badge bg-info me-2">
+                                            <i class="fa fa-clock me-1"></i>@Model.ThoiLuongPhut phút
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="price-display">
+                                    <div class="price-amount">@Model.Gia.ToString("N0")</div>
+                                    <div class="price-currency">VNĐ</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service Description -->
+                        @if (!string.IsNullOrEmpty(Model.MoTa))
+                        {
+                            <div class="service-description mb-4">
+                                <h4 class="text-primary mb-3">
+                                    <i class="fa fa-info-circle me-2"></i>Mô tả dịch vụ
+                                </h4>
+                                <div class="description-content">
+                                    @Model.MoTa
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Service Features -->
+                        <div class="service-features mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="fa fa-star me-2"></i>Đặc điểm dịch vụ
+                            </h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fa fa-check-circle text-success me-2"></i>
+                                        <span>Chất lượng cao</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fa fa-check-circle text-success me-2"></i>
+                                        <span>Nhân viên chuyên nghiệp</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fa fa-check-circle text-success me-2"></i>
+                                        <span>Thiết bị hiện đại</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fa fa-check-circle text-success me-2"></i>
+                                        <span>Môi trường sạch sẽ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="service-actions">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <a href="@Url.Action("Index", "Booking", new { area = "Customer", serviceId = Model.IdDichVu })" 
+                                       class="btn btn-primary btn-lg w-100">
+                                        <i class="fa fa-calendar-plus-o me-2"></i>Đặt lịch ngay
+                                    </a>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <a href="@Url.Action("Index", "Services", new { area = "Customer" })" 
+                                       class="btn btn-outline-primary btn-lg w-100">
+                                        <i class="fa fa-arrow-left me-2"></i>Quay lại danh sách
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Rating Summary -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <i class="fa fa-star me-2"></i>Đánh giá
+                        </h5>
+                        @{
+                            var averageRating = Model.DanhGias?.Any() == true 
+                                ? Model.DanhGias.Average(dg => dg.SoSao) 
+                                : 0;
+                            var ratingCount = Model.DanhGias?.Count ?? 0;
+                        }
+                        <div class="rating-summary text-center mb-3">
+                            <div class="rating-stars mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= averageRating)
+                                    {
+                                        <i class="fa fa-star fa-2x text-warning"></i>
+                                    }
+                                    else if (i - averageRating < 1)
+                                    {
+                                        <i class="fa fa-star-half-o fa-2x text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star-o fa-2x text-warning"></i>
+                                    }
+                                }
+                            </div>
+                            <div class="rating-score">
+                                <span class="h3 text-primary">@averageRating.ToString("F1")</span>
+                                <span class="text-muted">/ 5</span>
+                            </div>
+                            <div class="rating-count text-muted">
+                                @ratingCount đánh giá
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Info -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <i class="fa fa-info-circle me-2"></i>Thông tin nhanh
+                        </h5>
+                        <div class="quick-info">
+                            <div class="info-item mb-2">
+                                <i class="fa fa-tag text-primary me-2"></i>
+                                <span>Danh mục: @(Model.DanhMucDichVu?.TenDanhMuc ?? "Chưa phân loại")</span>
+                            </div>
+                            @if (Model.ThoiLuongPhut.HasValue)
+                            {
+                                <div class="info-item mb-2">
+                                    <i class="fa fa-clock text-primary me-2"></i>
+                                    <span>Thời lượng: @Model.ThoiLuongPhut phút</span>
+                                </div>
+                            }
+                            <div class="info-item mb-2">
+                                <i class="fa fa-money text-primary me-2"></i>
+                                <span>Giá: @Model.Gia.ToString("N0") VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        @if (Model.DanhGias?.Any() == true)
+        {
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="text-primary mb-4">
+                                <i class="fa fa-comments me-2"></i>Đánh giá từ khách hàng
+                            </h4>
+                            <div class="reviews-container">
+                                @foreach (var review in Model.DanhGias.OrderByDescending(dg => dg.NgayDanhGia))
+                                {
+                                    <div class="review-item border-bottom pb-3 mb-3">
+                                        <div class="review-header d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h6 class="mb-1">@(review.KhachHang?.HoTen ?? "Khách hàng")</h6>
+                                                <small class="text-muted">@review.NgayDanhGia.ToString("dd/MM/yyyy HH:mm")</small>
+                                            </div>
+                                            <div class="review-rating">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    if (i <= review.SoSao)
+                                                    {
+                                                        <i class="fa fa-star text-warning"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-star-o text-warning"></i>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(review.BinhLuan))
+                                        {
+                                            <div class="review-content">
+                                                <p class="mb-0">@review.BinhLuan</p>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .price-display {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
+    
+    .price-amount {
+        font-size: 2em;
+        font-weight: bold;
+    }
+    
+    .price-currency {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+    
+    .service-meta .badge {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+    
+    .description-content {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        line-height: 1.6;
+    }
+    
+    .feature-item {
+        padding: 8px 0;
+        font-size: 1.1em;
+    }
+    
+    .rating-stars {
+        margin-bottom: 10px;
+    }
+    
+    .rating-score {
+        margin-bottom: 5px;
+    }
+    
+    .quick-info .info-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .quick-info .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .review-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .review-rating {
+        font-size: 0.9em;
+    }
+    
+    .service-actions .btn {
+        border-radius: 10px;
+        padding: 12px 20px;
+    }
+    
+    .breadcrumb {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+    }
+</style> 

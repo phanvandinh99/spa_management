@@ -1,5 +1,188 @@
+@model IEnumerable<SpaManagement.Web.Models.DichVu>
 @{
     Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Dịch vụ của chúng tôi";
 }
-<h2>Dịch vụ của chúng tôi</h2>
-<p>Đây là trang Dịch vụ.</p> 
+
+<div class="container-fluid py-5">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 text-primary mb-3">Dịch vụ của chúng tôi</h1>
+            <p class="lead text-muted">Khám phá các dịch vụ chăm sóc sắc đẹp chất lượng cao</p>
+        </div>
+
+        <!-- Category Filter -->
+        @if (ViewBag.Categories != null)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-center">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Category", "Services", new { area = "Customer" })" 
+                               class="btn @(ViewBag.SelectedCategory == null ? "btn-primary" : "btn-outline-primary")">
+                                Tất cả
+                            </a>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <a href="@Url.Action("Category", "Services", new { area = "Customer", categoryId = category.IdDanhMuc })" 
+                                   class="btn @(ViewBag.SelectedCategory == category.IdDanhMuc ? "btn-primary" : "btn-outline-primary")">
+                                    @category.TenDanhMuc
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Services Grid -->
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var service in Model)
+                {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 service-card shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <div class="service-icon mb-3">
+                                    <i class="fa fa-leaf fa-3x text-primary"></i>
+                                </div>
+                                
+                                <h5 class="card-title text-primary mb-2">@service.TenDichVu</h5>
+                                
+                                @if (!string.IsNullOrEmpty(service.MoTa))
+                                {
+                                    <p class="card-text text-muted mb-3">@service.MoTa</p>
+                                }
+                                
+                                <div class="service-details mb-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted">Danh mục:</small>
+                                            <div class="fw-bold">@(service.DanhMucDichVu?.TenDanhMuc ?? "Chưa phân loại")</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Thời lượng:</small>
+                                            <div class="fw-bold">@(service.ThoiLuongPhut?.ToString() ?? "N/A") phút</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-rating mb-3">
+                                    @{
+                                        var averageRating = service.DanhGias?.Any() == true 
+                                            ? service.DanhGias.Average(dg => dg.SoSao) 
+                                            : 0;
+                                        var ratingCount = service.DanhGias?.Count ?? 0;
+                                    }
+                                    <div class="d-flex align-items-center">
+                                        <div class="stars me-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= averageRating)
+                                                {
+                                                    <i class="fa fa-star text-warning"></i>
+                                                }
+                                                else if (i - averageRating < 1)
+                                                {
+                                                    <i class="fa fa-star-half-o text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star-o text-warning"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <small class="text-muted">(@ratingCount đánh giá)</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-price mb-3">
+                                    <div class="price-tag">
+                                        <span class="currency">VNĐ</span>
+                                        <span class="amount">@service.Gia.ToString("N0")</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-auto">
+                                    <a href="@Url.Action("Details", "Services", new { area = "Customer", id = service.IdDichVu })" 
+                                       class="btn btn-primary w-100">
+                                        <i class="fa fa-info-circle me-2"></i>Chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Không tìm thấy dịch vụ nào</h4>
+                        <p class="text-muted">Vui lòng thử lại với bộ lọc khác</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .service-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    
+    .service-icon {
+        text-align: center;
+    }
+    
+    .price-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        text-align: center;
+        display: inline-block;
+    }
+    
+    .price-tag .currency {
+        font-size: 0.8em;
+        opacity: 0.9;
+    }
+    
+    .price-tag .amount {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    
+    .stars {
+        font-size: 0.9em;
+    }
+    
+    .btn-group .btn {
+        border-radius: 25px;
+        margin: 0 2px;
+    }
+    
+    .service-details {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    .service-rating {
+        border-top: 1px solid #e9ecef;
+        padding-top: 10px;
+    }
+</style> 
