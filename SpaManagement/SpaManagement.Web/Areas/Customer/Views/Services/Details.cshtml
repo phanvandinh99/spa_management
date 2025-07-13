@@ -1,0 +1,125 @@
+@model SpaManagement.Web.Models.DichVu
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = Model.TenDichVu;
+}
+<div class="container-fluid py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home", new { area = "Customer" })">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Services", new { area = "Customer" })">Dịch vụ</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.TenDichVu</li>
+            </ol>
+        </nav>
+        <div class="row">
+            <!-- Service Details -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-7">
+                                <h1 class="display-5 text-primary mb-3">@Model.TenDichVu</h1>
+                         
+                                <div class="service-meta mb-3">
+                                    <span class="badge bg-primary me-2">
+                                        <i class="fa fa-tag me-1"></i>@(Model.DanhMucDichVu?.TenDanhMuc ?? "Chưa phân loại")
+                                    </span>
+                                    <span class="badge bg-info me-2">
+                                        <i class="fa fa-clock-o me-1"></i>@Model.ThoiLuongPhut phút
+                                    </span>
+                                </div>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount">@Model.Gia.ToString("N0")</span>
+                                    <span class="price-currency">VNĐ</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.MoTa))
+                                {
+                                    <div class="service-description mb-4">
+                                        <h4 class="text-primary mb-3">
+                                            <i class="fa fa-info-circle me-2"></i>Mô tả dịch vụ
+                                        </h4>
+                                        <div class="description-content">
+                                            @Model.MoTa
+                                        </div>
+                                    </div>
+                                }
+                                <div class="mb-4">
+                                    <a href="/Customer/Booking?serviceId=@Model.IdDichVu" class="btn btn-primary btn-lg w-100">
+                                        <i class="fa fa-calendar me-1"></i> Đặt lịch
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <i class="fa fa-info-circle me-2"></i>Thông tin nhanh
+                        </h5>
+                        <div class="quick-info">
+                            <div class="info-item mb-2">
+                                <i class="fa fa-tag text-primary me-2"></i>
+                                <span>Danh mục: @(Model.DanhMucDichVu?.TenDanhMuc ?? "Chưa phân loại")</span>
+                            </div>
+                            <div class="info-item mb-2">
+                                <i class="fa fa-clock-o text-primary me-2"></i>
+                                <span>Thời lượng: @Model.ThoiLuongPhut phút</span>
+                            </div>
+                            <div class="info-item mb-2">
+                                <i class="fa fa-money text-primary me-2"></i>
+                                <span>Giá: @Model.Gia.ToString("N0") VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .price-display {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .price-amount {
+        font-size: 2em;
+        font-weight: bold;
+    }
+
+    .price-currency {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+
+    .service-meta .badge {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+
+    .description-content {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        line-height: 1.6;
+    }
+
+    .breadcrumb {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+    }
+</style> 
