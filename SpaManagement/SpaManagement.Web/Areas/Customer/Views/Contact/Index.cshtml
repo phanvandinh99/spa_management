@@ -1,5 +1,35 @@
 @{
     Layout = "../Shared/_Layout.cshtml";
 }
-<h2>Liên hệ</h2>
-<p>Đây là trang Liên hệ.</p> 
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Liên hệ với chúng tôi</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="name" placeholder="Nhập họ và tên">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Nhập email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="Nhập số điện thoại">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Nội dung liên hệ</label>
+                            <textarea class="form-control" id="message" rows="4" placeholder="Nhập nội dung liên hệ"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Gửi liên hệ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
