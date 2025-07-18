@@ -1,4 +1,5 @@
 @model SpaManagement.Web.Models.SanPham
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     ViewData["Title"] = "Thêm sản phẩm";
@@ -12,8 +13,9 @@
         <div asp-validation-summary="All" class="text-danger"></div>
     </div>
 }
-
-<form asp-action="Create" enctype="multipart/form-data" method="post" class="card p-4 shadow-sm bg-white">
+<form asp-action="Create" asp-area="Admin" asp-controller="Products" enctype="multipart/form-data" method="post" class="card p-4 shadow-sm bg-white">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger mb-2"></div>
     <div class="mb-3">
         <label class="form-label">Tên sản phẩm *</label>
         <input asp-for="TenSanPham" class="form-control" required />
@@ -21,8 +23,12 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Danh mục *</label>
-        <select asp-for="IdDanhMuc" class="form-select" asp-items="ViewBag.IdDanhMuc" required>
+        <select name="IdDanhMuc" id="IdDanhMuc" class="form-select" required>
             <option value="">-- Chọn danh mục --</option>
+            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IdDanhMuc)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
         </select>
         <span asp-validation-for="IdDanhMuc" class="text-danger"></span>
     </div>
@@ -50,7 +56,6 @@
         <button type="submit" class="btn btn-success">Lưu</button>
     </div>
 </form>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 } 

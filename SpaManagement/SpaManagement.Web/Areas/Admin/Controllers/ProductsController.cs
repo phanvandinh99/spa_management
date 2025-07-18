@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 
 namespace SpaManagement.Web.Areas.Admin.Controllers
 {
@@ -51,27 +52,46 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SanPham sanPham, IFormFile? HinhAnh)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (HinhAnh != null && HinhAnh.Length > 0)
+                if (ModelState.IsValid)
                 {
-                    var uploads = Path.Combine(_env.WebRootPath, "images/products");
-                    if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
-                    var fileName = Path.GetFileNameWithoutExtension(HinhAnh.FileName) + "_" + System.Guid.NewGuid().ToString().Substring(0, 8) + Path.GetExtension(HinhAnh.FileName);
-                    var filePath = Path.Combine(uploads, fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (HinhAnh != null && HinhAnh.Length > 0)
                     {
-                        await HinhAnh.CopyToAsync(stream);
+                        var uploads = Path.Combine(_env.WebRootPath, "images/products");
+                        if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
+                        var fileName = Path.GetFileNameWithoutExtension(HinhAnh.FileName) + "_" + System.Guid.NewGuid().ToString().Substring(0, 8) + Path.GetExtension(HinhAnh.FileName);
+                        var filePath = Path.Combine(uploads, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await HinhAnh.CopyToAsync(stream);
+                        }
+                        sanPham.HinhAnhURL = "/images/products/" + fileName;
                     }
-                    sanPham.HinhAnhURL = "/images/products/" + fileName;
+                    _context.Add(sanPham);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                _context.Add(sanPham);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    // Log lỗi ModelState
+                    foreach (var key in ModelState.Keys)
+                    {
+                        var errors = ModelState[key].Errors;
+                        foreach (var error in errors)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"ModelState Error for {key}: {error.ErrorMessage}");
+                        }
+                    }
+                }
             }
-            // Nếu có lỗi, nạp lại danh mục để dropdown không bị rỗng
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in Create POST: {ex.Message}\n{ex.StackTrace}");
+                ModelState.AddModelError("", "Đã xảy ra lỗi: " + ex.Message);
+            }
             var danhMucList = _context.DanhMucSanPham.ToList();
-            ViewBag.IdDanhMuc = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
+            ViewBag.IdDanhMuc = new SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
             return View(sanPham);
         }
 
@@ -82,7 +102,7 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
             var sanPham = await _context.SanPham.FindAsync(id);
             if (sanPham == null) return NotFound();
             var danhMucList = _context.DanhMucSanPham.ToList();
-            ViewBag.IdDanhMuc = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
+            ViewBag.IdDanhMuc = new SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
             return View(sanPham);
         }
 
@@ -120,9 +140,8 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            // Nếu có lỗi, nạp lại danh mục để dropdown không bị rỗng
             var danhMucList = _context.DanhMucSanPham.ToList();
-            ViewBag.IdDanhMuc = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
+            ViewBag.IdDanhMuc = new SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
             return View(sanPham);
         }
 
@@ -149,4 +168,4 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}

@@ -27,8 +27,9 @@ namespace SpaManagement.Web.Models
         [StringLength(255, ErrorMessage = "URL hình ảnh không được vượt quá 255 ký tự")]
         public string? HinhAnhURL { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng chọn danh mục")]
         [Display(Name = "Danh mục")]
-        public int? IdDanhMuc { get; set; }
+        public int IdDanhMuc { get; set; }
 
         // Navigation properties
         public virtual DanhMucSanPham? DanhMucSanPham { get; set; }
