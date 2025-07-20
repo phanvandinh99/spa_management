@@ -46,7 +46,7 @@
                     <a href="@Url.Action("Details", new { id = item.order.IdDonHang })" class="btn btn-sm btn-info me-1">
                         <i class="fa fa-eye"></i> Chi tiết
                     </a>
-                    <a href="@Url.Action("Edit", new { id = item.order.IdDonHang })" class="btn btn-sm btn-primary me-1">
+                    <a href="@Url.Action("EditStatus", new { id = item.order.IdDonHang })" class="btn btn-sm btn-primary me-1">
                         <i class="fa fa-edit"></i> Sửa
                     </a>
                     <a href="@Url.Action("Delete", new { id = item.order.IdDonHang })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?');">
