@@ -44,39 +44,63 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Orders/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> EditStatus(int? id)
         {
-            if (id == null) return NotFound();
-            var order = await _context.DonHang.FindAsync(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var order = await _context.DonHang
+                .Include(o => o.KhachHang)
+                .FirstOrDefaultAsync(o => o.IdDonHang == id);
             if (order == null) return NotFound();
-            ViewBag.TrangThai = new SelectList(new[] { "ChoThanhToan", "DaThanhToan", "DangGiao", "DaGiao", "DaHuy" }, order.TrangThai);
+            var trangThaiList = new[]
+            {
+                new { Value = "ChoThanhToan", Text = "Chờ thanh toán" },
+                new { Value = "DangXuLy", Text = "Đang xử lý" },
+                new { Value = "DangGiao", Text = "Đang giao" },
+                new { Value = "DaGiao", Text = "Đã giao" },
+                new { Value = "DaHuy", Text = "Đã hủy" }
+            };
+            ViewBag.TrangThai = new SelectList(trangThaiList, "Value", "Text", order.TrangThai);
             return View(order);
         }
 
         // POST: Admin/Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, DonHang donHang)
+        public async Task<IActionResult> EditStatus(int IdDonHang, string TrangThai)
         {
-            if (id != donHang.IdDonHang) return NotFound();
-            if (ModelState.IsValid)
+            var donHang = await _context.DonHang
+                .Include(o => o.KhachHang)
+                .FirstOrDefaultAsync(o => o.IdDonHang == IdDonHang);
+            if (donHang == null) return NotFound();
+
+            donHang.TrangThai = TrangThai;
+
+            try
             {
-                try
-                {
-                    _context.Update(donHang);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.DonHang.Any(e => e.IdDonHang == donHang.IdDonHang))
-                        return NotFound();
-                    else
-                        throw;
-                }
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.TrangThai = new SelectList(new[] { "ChoThanhToan", "DaThanhToan", "DangGiao", "DaGiao", "DaHuy" }, donHang.TrangThai);
-            return View(donHang);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.DonHang.Any(e => e.IdDonHang == IdDonHang))
+                    return NotFound();
+                else
+                    throw;
+            }
+            // Nếu có lỗi, lấy lại danh sách trạng thái và return View với model đầy đủ
+            var trangThaiList = new[]
+            {
+                new { Value = "ChoThanhToan", Text = "Chờ thanh toán" },
+                new { Value = "DangXuLy", Text = "Đang xử lý" },
+                new { Value = "DangGiao", Text = "Đang giao" },
+                new { Value = "DaGiao", Text = "Đã giao" },
+                new { Value = "DaHuy", Text = "Đã hủy" }
+            };
+            ViewBag.TrangThai = new SelectList(trangThaiList, "Value", "Text", donHang.TrangThai);
+            return View("EditStatus", donHang);
         }
 
         // GET: Admin/Orders/Delete/5
@@ -104,4 +128,4 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}

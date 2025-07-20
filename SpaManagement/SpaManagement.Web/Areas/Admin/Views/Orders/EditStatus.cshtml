@@ -4,12 +4,17 @@
     ViewData["Title"] = "Cập nhật Đơn hàng";
 }
 <h2 class="text-primary mb-4">Cập nhật Đơn hàng</h2>
-<form asp-action="Edit" method="post" class="card p-4 shadow-sm bg-white">
-    <input type="hidden" asp-for="IdDonHang" />
+<form asp-action="EditStatus" asp-controller="Orders" asp-area="Admin" method="post" class="card p-4 shadow-sm bg-white">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="IdDonHang" value="@Model.IdDonHang" />
     <div class="mb-3">
         <label class="form-label">Trạng thái</label>
-        <select asp-for="TrangThai" class="form-select" asp-items="ViewBag.TrangThai">
-            <option value="">-- Chọn trạng thái --</option>
+        <select name="TrangThai" class="form-select" required>
+            <option value="ChoThanhToan" @(Model.TrangThai == "ChoThanhToan" ? "selected" : "")>Chờ thanh toán</option>
+            <option value="DangXuLy" @(Model.TrangThai == "DangXuLy" ? "selected" : "")>Đang xử lý</option>
+            <option value="DangGiao" @(Model.TrangThai == "DangGiao" ? "selected" : "")>Đang giao</option>
+            <option value="DaGiao" @(Model.TrangThai == "DaGiao" ? "selected" : "")>Đã giao</option>
+            <option value="DaHuy" @(Model.TrangThai == "DaHuy" ? "selected" : "")>Đã hủy</option>
         </select>
         <span asp-validation-for="TrangThai" class="text-danger"></span>
     </div>
