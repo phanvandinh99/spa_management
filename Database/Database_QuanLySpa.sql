@@ -202,12 +202,12 @@ INSERT INTO VaiTro (TenVaiTro) VALUES (N'KhachHang'), (N'NhanVien'), (N'QuanLy')
 -- 1. TẠO TÀI KHOẢN
 -- Mật khẩu ở đây chỉ là chuỗi giả lập, trong thực tế bạn PHẢI băm (hash) mật khẩu.
 INSERT INTO TaiKhoan (TenDangNhap, MatKhauHash, IdVaiTro) VALUES
-(N'admin_spa', N'hashed_password_placeholder', 3), -- Quản lý (IdVaiTro=3)
-(N'ngocanh.nv', N'hashed_password_placeholder', 2), -- Nhân viên (IdVaiTro=2)
-(N'thanhhuyen.nv', N'hashed_password_placeholder', 2), -- Nhân viên
-(N'minhthu.kh', N'hashed_password_placeholder', 1), -- Khách hàng (IdVaiTro=1)
-(N'baotran.kh', N'hashed_password_placeholder', 1), -- Khách hàng
-(N'quoctuan.kh', N'hashed_password_placeholder', 1); -- Khách hàng
+(N'admin_spa', N'Abc123', 3), -- Quản lý (IdVaiTro=3)
+(N'ngocanh.nv', N'Abc123', 2), -- Nhân viên (IdVaiTro=2)
+(N'thanhhuyen.nv', N'Abc123', 2), -- Nhân viên
+(N'minhthu.kh', N'Abc123', 1), -- Khách hàng (IdVaiTro=1)
+(N'baotran.kh', N'Abc123', 1), -- Khách hàng
+(N'quoctuan.kh', N'Abc123', 1); -- Khách hàng
 
 -- 2. TẠO NHÂN VIÊN VÀ KHÁCH HÀNG (liên kết với tài khoản tương ứng)
 INSERT INTO NhanVien (HoTen, SoDienThoai, ChucVu, IdTaiKhoan) VALUES
