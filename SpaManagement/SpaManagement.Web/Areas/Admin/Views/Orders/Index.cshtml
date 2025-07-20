@@ -3,6 +3,20 @@
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     ViewData["Title"] = "Quản lý Đơn hàng";
 }
+@functions {
+    string GetTrangThaiVN(string trangThai)
+    {
+        switch (trangThai)
+        {
+            case "ChoThanhToan": return "Chờ thanh toán";
+            case "DangXuLy": return "Đang xử lý";
+            case "DangGiao": return "Đang giao";
+            case "DaGiao": return "Đã giao";
+            case "DaHuy": return "Đã hủy";
+            default: return trangThai;
+        }
+    }
+}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0 text-primary">Quản lý Đơn hàng</h2>
 </div>
@@ -26,7 +40,7 @@
                 <td>@item.order.IdDonHang</td>
                 <td>@item.order.KhachHang?.HoTen</td>
                 <td>@item.order.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@item.order.TrangThai</td>
+                <td>@GetTrangThaiVN(item.order.TrangThai)</td>
                 <td>@item.order.TongTien.ToString("N0") VNĐ</td>
                 <td>
                     <a href="@Url.Action("Details", new { id = item.order.IdDonHang })" class="btn btn-sm btn-info me-1">
