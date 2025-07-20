@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "Thống kê quản trị";
+    Layout = "../Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Thống kê quản trị</h2>
+<hr />
+
+<!-- Form tra cứu thống kê -->
+<div class="mb-4">
+    <form id="filterForm" class="form-inline">
+        <label for="fromDate" class="mr-2">Từ ngày:</label>
+        <input type="date" id="fromDate" name="fromDate" class="form-control mr-3" />
+        <label for="toDate" class="mr-2">Đến ngày:</label>
+        <input type="date" id="toDate" name="toDate" class="form-control mr-3" />
+        <button type="submit" class="btn btn-primary">Xem thống kê</button>
+    </form>
+</div>
+
+<!-- Thống kê Đơn hàng -->
+<div class="mb-5">
+    <h4>Đơn hàng</h4>
+    <canvas id="ordersChart" width="900" height="300"></canvas>
+    <div id="ordersTable" class="mt-3"></div>
+</div>
+
+<!-- Thống kê Dịch vụ -->
+<div class="mb-5">
+    <h4>Dịch vụ</h4>
+    <canvas id="servicesChart" width="900" height="300"></canvas>
+    <div id="servicesTable" class="mt-3"></div>
+</div>
+
+<!-- Thống kê Doanh thu -->
+<div class="mb-5">
+    <h4>Doanh thu theo ngày</h4>
+    <canvas id="revenueChart" width="900" height="300"></canvas>
+    <div id="revenueTable" class="mt-3"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let ordersChart, servicesChart, revenueChart;
+        const ordersChartCtx = document.getElementById('ordersChart').getContext('2d');
+        const servicesChartCtx = document.getElementById('servicesChart').getContext('2d');
+        const revenueChartCtx = document.getElementById('revenueChart').getContext('2d');
+        const ordersTableDiv = document.getElementById('ordersTable');
+        const servicesTableDiv = document.getElementById('servicesTable');
+        const revenueTableDiv = document.getElementById('revenueTable');
+        const fromDate = document.getElementById('fromDate');
+        const toDate = document.getElementById('toDate');
+        let errorDiv;
+
+        // Thêm div hiển thị lỗi nếu chưa có
+        window.addEventListener('DOMContentLoaded', function() {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'statError';
+            errorDiv.className = 'alert alert-danger';
+            errorDiv.style.display = 'none';
+            document.querySelector('h2').after(errorDiv);
+        });
+
+        // Thiết lập mặc định input ngày là ngày hiện tại
+        function setTodayDefault() {
+            const today = new Date().toISOString().slice(0, 10);
+            fromDate.value = today;
+            toDate.value = today;
+        }
+
+        async function fetchAndRender() {
+            let url = `/Admin/Statistics/GetAllStatistics`;
+            const params = [];
+            if (fromDate.value) params.push(`from=${fromDate.value}`);
+            if (toDate.value) params.push(`to=${toDate.value}`);
+            if (params.length > 0) url += '?' + params.join('&');
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Lỗi API: ' + res.status);
+                const data = await res.json();
+                if (!data || !data.orders) throw new Error('Không nhận được dữ liệu thống kê!');
+                errorDiv.style.display = 'none';
+                renderOrders(data.orders);
+                renderServices(data.services);
+                renderRevenue(data.revenueByDay);
+            } catch (err) {
+                errorDiv.innerText = 'Không thể lấy dữ liệu thống kê! ' + err.message;
+                errorDiv.style.display = '';
+                ordersTableDiv.innerHTML = servicesTableDiv.innerHTML = revenueTableDiv.innerHTML = '';
+                if (ordersChart) ordersChart.destroy();
+                if (servicesChart) servicesChart.destroy();
+                if (revenueChart) revenueChart.destroy();
+                console.error('Lỗi thống kê:', err);
+            }
+        }
+
+        function renderOrders(orders) {
+            const byStatus = Array.isArray(orders.byStatus) ? orders.byStatus : [];
+            if (ordersChart) ordersChart.destroy();
+            ordersChart = new Chart(ordersChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: byStatus.map(x => x.status),
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: byStatus.map(x => x.count),
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+            // Bảng tổng hợp
+            let html = `<table class="table table-bordered table-sm"><thead><tr><th>Tổng đơn hàng</th><th>Tổng doanh thu</th></tr></thead><tbody>`;
+            html += `<tr><td>${orders.totalOrders ?? 0}</td><td>${(orders.totalRevenue ?? 0).toLocaleString('vi-VN')}</td></tr></tbody></table>`;
+            html += `<table class="table table-bordered table-sm mt-2"><thead><tr><th>Trạng thái</th><th>Số lượng</th></tr></thead><tbody>`;
+            for (const row of byStatus) {
+                html += `<tr><td>${row.status}</td><td>${row.count}</td></tr>`;
+            }
+            html += '</tbody></table>';
+            ordersTableDiv.innerHTML = html;
+        }
+
+        function renderServices(services) {
+            const arr = Array.isArray(services) ? services : [];
+            if (servicesChart) servicesChart.destroy();
+            servicesChart = new Chart(servicesChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: arr.map(x => x.service),
+                    datasets: [{
+                        label: 'Số lượt sử dụng',
+                        data: arr.map(x => x.count),
+                        backgroundColor: '#ffd700'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+            // Bảng dịch vụ
+            let html = `<table class="table table-bordered table-sm"><thead><tr><th>Dịch vụ</th><th>Số lượt sử dụng</th></tr></thead><tbody>`;
+            for (const row of arr) {
+                html += `<tr><td>${row.service}</td><td>${row.count}</td></tr>`;
+            }
+            html += '</tbody></table>';
+            servicesTableDiv.innerHTML = html;
+        }
+
+        function renderRevenue(revenue) {
+            const arr = Array.isArray(revenue) ? revenue : [];
+            if (revenueChart) revenueChart.destroy();
+            revenueChart = new Chart(revenueChartCtx, {
+                type: 'line',
+                data: {
+                    labels: arr.map(x => x.date),
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: arr.map(x => x.revenue),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102,126,234,0.2)',
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'top' } } }
+            });
+            // Bảng doanh thu
+            let html = `<table class="table table-bordered table-sm"><thead><tr><th>Ngày</th><th>Doanh thu</th></tr></thead><tbody>`;
+            for (const row of arr) {
+                html += `<tr><td>${row.date}</td><td>${row.revenue.toLocaleString('vi-VN')}</td></tr>`;
+            }
+            html += '</tbody></table>';
+            revenueTableDiv.innerHTML = html;
+        }
+
+        document.getElementById('filterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetchAndRender();
+        });
+
+        window.onload = function() {
+            setTodayDefault();
+            fetchAndRender();
+        };
+    </script>
+} 
