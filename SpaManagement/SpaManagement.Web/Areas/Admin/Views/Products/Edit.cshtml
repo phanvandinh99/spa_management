@@ -12,34 +12,38 @@
         <div asp-validation-summary="All" class="text-danger"></div>
     </div>
 }
-
-<form asp-action="Edit" enctype="multipart/form-data" method="post" class="card p-4 shadow-sm bg-white">
-    <input type="hidden" asp-for="IdSanPham" />
+<form action="@Url.Action("EditPost", "Products", new { area = "Admin" })" enctype="multipart/form-data" method="post" class="card p-4 shadow-sm bg-white">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="IdSanPham" value="@Model.IdSanPham" />
     <div class="mb-3">
         <label class="form-label">Tên sản phẩm *</label>
-        <input asp-for="TenSanPham" class="form-control" required />
+        <input name="TenSanPham" type="text" class="form-control" required value="@Model.TenSanPham" />
         <span asp-validation-for="TenSanPham" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label">Danh mục *</label>
-        <select asp-for="IdDanhMuc" class="form-select" asp-items="ViewBag.IdDanhMuc" required>
+        <select name="IdDanhMuc" id="IdDanhMuc" class="form-select" required>
             <option value="">-- Chọn danh mục --</option>
+            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IdDanhMuc)
+            {
+                <option value="@item.Value" @(item.Value == Model.IdDanhMuc.ToString() ? "selected" : "")>@item.Text</option>
+            }
         </select>
         <span asp-validation-for="IdDanhMuc" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label">Giá (VNĐ) *</label>
-        <input asp-for="Gia" type="number" min="0" step="0.01" class="form-control" required />
+        <input name="Gia" type="number" min="0" step="0.01" class="form-control" required value="@Model.Gia" />
         <span asp-validation-for="Gia" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label">Số lượng tồn *</label>
-        <input asp-for="SoLuongTon" type="number" min="0" class="form-control" required />
+        <input name="SoLuongTon" type="number" min="0" class="form-control" required value="@Model.SoLuongTon" />
         <span asp-validation-for="SoLuongTon" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label">Mô tả</label>
-        <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+        <textarea name="MoTa" class="form-control" rows="3">@Model.MoTa</textarea>
         <span asp-validation-for="MoTa" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -58,7 +62,6 @@
         <button type="submit" class="btn btn-primary">Cập nhật</button>
     </div>
 </form>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 } 

@@ -109,40 +109,43 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
         // POST: Admin/Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, SanPham sanPham, IFormFile? HinhAnh)
+        public async Task<IActionResult> EditPost(IFormCollection form, IFormFile? HinhAnh)
         {
-            if (id != sanPham.IdSanPham) return NotFound();
-            if (ModelState.IsValid)
+            var idSanPhamStr = form["IdSanPham"];
+            var tenSanPham = form["TenSanPham"];
+            var idDanhMucStr = form["IdDanhMuc"];
+            var giaStr = form["Gia"];
+            var soLuongTonStr = form["SoLuongTon"];
+            var moTa = form["MoTa"];
+
+            if (!int.TryParse(idSanPhamStr, out int idSanPham))
+                return BadRequest();
+
+            var sanPham = await _context.SanPham.FindAsync(idSanPham);
+            if (sanPham == null)
+                return NotFound();
+
+            sanPham.TenSanPham = tenSanPham;
+            sanPham.MoTa = moTa;
+            sanPham.IdDanhMuc = int.TryParse(idDanhMucStr, out int idDanhMuc) ? idDanhMuc : sanPham.IdDanhMuc;
+            sanPham.Gia = decimal.TryParse(giaStr, out decimal gia) ? gia : sanPham.Gia;
+            sanPham.SoLuongTon = int.TryParse(soLuongTonStr, out int soLuongTon) ? soLuongTon : sanPham.SoLuongTon;
+
+            if (HinhAnh != null && HinhAnh.Length > 0)
             {
-                try
+                var uploads = Path.Combine(_env.WebRootPath, "images/products");
+                if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
+                var fileName = Path.GetFileNameWithoutExtension(HinhAnh.FileName) + "_" + Guid.NewGuid().ToString().Substring(0, 8) + Path.GetExtension(HinhAnh.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    if (HinhAnh != null && HinhAnh.Length > 0)
-                    {
-                        var uploads = Path.Combine(_env.WebRootPath, "images/products");
-                        if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
-                        var fileName = Path.GetFileNameWithoutExtension(HinhAnh.FileName) + "_" + System.Guid.NewGuid().ToString().Substring(0, 8) + Path.GetExtension(HinhAnh.FileName);
-                        var filePath = Path.Combine(uploads, fileName);
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await HinhAnh.CopyToAsync(stream);
-                        }
-                        sanPham.HinhAnhURL = "/images/products/" + fileName;
-                    }
-                    _context.Update(sanPham);
-                    await _context.SaveChangesAsync();
+                    await HinhAnh.CopyToAsync(stream);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.SanPham.Any(e => e.IdSanPham == sanPham.IdSanPham))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                sanPham.HinhAnhURL = "/images/products/" + fileName;
             }
-            var danhMucList = _context.DanhMucSanPham.ToList();
-            ViewBag.IdDanhMuc = new SelectList(danhMucList, "IdDanhMuc", "TenDanhMuc", sanPham.IdDanhMuc);
-            return View(sanPham);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
         // GET: Admin/Products/Delete/5
@@ -162,8 +165,20 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
             var sanPham = await _context.SanPham.FindAsync(id);
             if (sanPham != null)
             {
-                _context.SanPham.Remove(sanPham);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.SanPham.Remove(sanPham);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE constraint"))
+                    {
+                        TempData["Error"] = "Không thể xóa sản phẩm vì đã có đơn hàng liên quan!";
+                        return RedirectToAction(nameof(Delete), new { id });
+                    }
+                    throw;
+                }
             }
             return RedirectToAction(nameof(Index));
         }

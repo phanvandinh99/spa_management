@@ -9,7 +9,7 @@ namespace SpaManagement.Web.Models
         [Required(ErrorMessage = "Tên sản phẩm là bắt buộc")]
         [StringLength(255, ErrorMessage = "Tên sản phẩm không được vượt quá 255 ký tự")]
         [Display(Name = "Tên sản phẩm")]
-        public string TenSanPham { get; set; } = string.Empty;
+        public string TenSanPham { get; set; }
 
         [Display(Name = "Mô tả")]
         public string? MoTa { get; set; }
@@ -36,4 +36,4 @@ namespace SpaManagement.Web.Models
         public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; } = new List<ChiTietDonHang>();
         public virtual ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
     }
-} 
+}
