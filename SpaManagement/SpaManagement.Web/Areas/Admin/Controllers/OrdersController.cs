@@ -119,10 +119,20 @@ namespace SpaManagement.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.DonHang.FindAsync(id);
+            var order = await _context.DonHang
+                .Include(o => o.ChiTietDonHangs)
+                .Include(o => o.ThanhToans)
+                .FirstOrDefaultAsync(o => o.IdDonHang == id);
+
             if (order != null)
             {
+                // Xóa chi tiết đơn hàng
+                _context.ChiTietDonHang.RemoveRange(order.ChiTietDonHangs);
+                // Xóa thanh toán liên quan
+                _context.ThanhToan.RemoveRange(order.ThanhToans);
+                // Xóa đơn hàng
                 _context.DonHang.Remove(order);
+
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
