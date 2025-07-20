@@ -34,7 +34,7 @@
                     <td>@ct.SanPham?.TenSanPham</td>
                     <td>@ct.SoLuong</td>
                     <td>@ct.DonGia.ToString("N0") VNĐ</td>
-                    <td>@(ct.SoLuong * ct.DonGia).ToString("N0") VNĐ</td>
+                    <td>@string.Format("{0:N0}", (ct.SoLuong * ct.DonGia)) VNĐ</td>
                 </tr>
             }
         </tbody>
