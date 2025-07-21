@@ -40,11 +40,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Add Session middleware
-app.UseSession();
-
-// Thêm dòng này trước UseAuthorization
 app.UseAuthentication();
+
+app.UseSession();
 
 app.UseAuthorization();
 
