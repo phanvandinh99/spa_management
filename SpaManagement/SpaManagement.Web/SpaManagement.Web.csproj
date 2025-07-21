@@ -4,11 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Content Include="wwwroot\**" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
-  
+
   <ItemGroup>
     <Folder Include="Areas\Admin\Controllers\" />
     <Folder Include="Areas\Admin\Data\" />
